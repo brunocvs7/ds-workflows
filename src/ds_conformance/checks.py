@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 import os
-import re
 import subprocess
 import tempfile
 from collections.abc import Callable
@@ -20,10 +19,7 @@ REQUIRED_DIRS = [
     "reports/figures",
     "tests",
 ]
-NOTEBOOK_NAME = re.compile(r"^\d{2}-[a-z]+-[a-z0-9-]+\.ipynb$")
-ABSOLUTE_PATH = re.compile(r"""["'](/Users/|/home/|[A-Za-z]:\\)""")
 SAMPLE_FIXTURE = "tests/fixtures/sample_raw.csv"
-MODULES_WITHOUT_TESTS = {"__init__", "__main__"}
 
 
 def find_package(root: Path) -> Path | None:
@@ -67,32 +63,9 @@ def check_notebooks(root: Path) -> list[str]:
         rel = nb.relative_to(root)
         if ".ipynb_checkpoints" in nb.parts:
             continue
-        if not NOTEBOOK_NAME.match(nb.name):
-            errors.append(f"{rel}: nome fora do padrão NN-iniciais-descricao.ipynb")
         cells = json.loads(nb.read_text()).get("cells", [])
         if any(c.get("outputs") or c.get("execution_count") for c in cells):
             errors.append(f"{rel}: notebook com outputs (rode o pre-commit / nbstripout)")
-    return errors
-
-
-def check_tests_per_module(root: Path) -> list[str]:
-    pkg = find_package(root)
-    if pkg is None:
-        return []
-    return [
-        f"{mod.relative_to(root)} não tem teste correspondente em tests/test_{mod.stem}.py"
-        for mod in sorted(pkg.glob("*.py"))
-        if mod.stem not in MODULES_WITHOUT_TESTS
-        and not (root / "tests" / f"test_{mod.stem}.py").is_file()
-    ]
-
-
-def check_no_absolute_paths(root: Path) -> list[str]:
-    errors = []
-    for py in sorted((root / "src").glob("**/*.py")):
-        for n, line in enumerate(py.read_text().splitlines(), start=1):
-            if ABSOLUTE_PATH.search(line):
-                errors.append(f"{py.relative_to(root)}:{n}: caminho absoluto — use paths.py")
     return errors
 
 
@@ -150,8 +123,6 @@ def check_pipeline_contract(root: Path) -> list[str]:
 CHECKS: dict[str, Callable[[Path], list[str]]] = {
     "estrutura de pastas": check_structure,
     "sem dados/modelos no git": check_no_committed_data,
-    "notebooks": check_notebooks,
-    "teste para cada módulo": check_tests_per_module,
-    "sem caminhos absolutos": check_no_absolute_paths,
+    "notebooks sem outputs": check_notebooks,
     "contrato do pipeline (treino + inferência + seed)": check_pipeline_contract,
 }

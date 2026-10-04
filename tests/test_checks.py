@@ -53,28 +53,13 @@ def test_committed_data_detected(project):
     ]
 
 
-def test_notebook_name_and_outputs(project):
-    _notebook(project / "notebooks/01-bcv-eda.ipynb", outputs=[])
+def test_notebook_outputs(project):
+    _notebook(project / "notebooks/Untitled.ipynb", outputs=[])
     assert checks.check_notebooks(project) == []
 
     _notebook(project / "notebooks/Untitled.ipynb", outputs=[{"text": "x"}])
-    errors = checks.check_notebooks(project)
-    assert len(errors) == 2
-    assert "nome fora do padrão" in errors[0]
-    assert "outputs" in errors[1]
-
-
-def test_module_without_test(project):
-    (project / "src/meu_pkg/model.py").touch()
-    assert checks.check_tests_per_module(project) == [
-        "src/meu_pkg/model.py não tem teste correspondente em tests/test_model.py"
-    ]
-
-
-def test_absolute_path_detected(project):
-    (project / "src/meu_pkg/features.py").write_text('P = "/Users/bruno/data.csv"\n')
-    assert checks.check_no_absolute_paths(project) == [
-        "src/meu_pkg/features.py:1: caminho absoluto — use paths.py"
+    assert checks.check_notebooks(project) == [
+        "notebooks/Untitled.ipynb: notebook com outputs (rode o pre-commit / nbstripout)"
     ]
 
 

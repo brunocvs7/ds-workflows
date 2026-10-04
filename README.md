@@ -59,9 +59,7 @@ uvx --from git+https://github.com/brunocvs7/ds-workflows@v1 ds-check [caminho]
 |---|---|
 | estrutura de pastas | falta `data/{raw,interim,processed,external}`, `models`, `notebooks`, `reports/figures`, `tests`, `pyproject.toml`, `uv.lock` ou `.pre-commit-config.yaml`; ou `src/` não tem exatamente um pacote |
 | sem dados/modelos no git | há arquivos versionados em `data/` ou `models/` além de `.gitkeep` |
-| notebooks | nome fora de `NN-iniciais-descricao.ipynb` ou notebook com outputs |
-| teste para cada módulo | `src/<pkg>/x.py` sem `tests/test_x.py` |
-| sem caminhos absolutos | strings com `/Users/`, `/home/` ou `C:\` em `src/` |
+| notebooks sem outputs | algum notebook foi commitado com outputs |
 | contrato do pipeline | `<pkg>.pipelines.train` e `.predict` não rodam sobre `tests/fixtures/sample_raw.csv`, não geram `model.joblib`, `metrics.json`, `predictions.csv`, ou duas execuções com a mesma seed dão métricas diferentes |
 
 ## Versionamento
