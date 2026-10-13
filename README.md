@@ -6,7 +6,7 @@ Não é uma CLI: os projetos **referenciam** este repo e o GitHub busca os workf
 | O quê | Onde | Como é usado |
 |---|---|---|
 | CI reutilizável (lint, test, conformance, branch-name) | `.github/workflows/python-ci.yml` | `uses:` no `ci.yml` de cada projeto |
-| Verificações de conformidade (`ds-check`) | `src/ds_conformance/` | o CI roda via `uvx --from git+...@v1 ds-check` |
+| Verificações de conformidade (`ds-check`) | `src/ds_conformance/` | o CI roda via `uvx --from git+...@v1 ds-check`, buscando o `ds-workflows` do mesmo dono do projeto |
 | Proteção da `main` | `rulesets/protect-main.json` | aplicado por `scripts/protect-repo.sh` |
 
 ## Usando em um projeto
@@ -20,7 +20,7 @@ on:
     branches: [main]
 jobs:
   ci:                      # o nome PRECISA ser `ci`
-    uses: brunocvs7/ds-workflows/.github/workflows/python-ci.yml@v1
+    uses: <dono>/ds-workflows/.github/workflows/python-ci.yml@v1
     # with:
     #   run-conformance: false          # para repos que não são projetos DS
     #   branch-pattern: '^(feature|fix)/.+$'
@@ -29,7 +29,7 @@ jobs:
 Proteja a `main` do repo (uma vez):
 
 ```bash
-./scripts/protect-repo.sh brunocvs7/meu-projeto
+./scripts/protect-repo.sh <dono>/meu-projeto
 ```
 
 Ruleset aplicado: exige PR, exige os checks `ci / lint`, `ci / test`, `ci / conformance` e
@@ -52,7 +52,7 @@ Merge só por squash. 0 aprovações exigidas (dá para subir quando houver mais
 ## ds-check
 
 ```bash
-uvx --from git+https://github.com/brunocvs7/ds-workflows@v1 ds-check [caminho]
+uvx --from git+https://github.com/<dono>/ds-workflows@v1 ds-check [caminho]
 ```
 
 | Verificação | Falha quando |

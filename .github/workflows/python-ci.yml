@@ -2,7 +2,7 @@
 #
 #   jobs:
 #     ci:
-#       uses: brunocvs7/ds-workflows/.github/workflows/python-ci.yml@v1
+#       uses: <dono>/ds-workflows/.github/workflows/python-ci.yml@v1
 #
 # O job do chamador DEVE se chamar `ci`: os checks obrigatórios do ruleset são
 # `ci / lint`, `ci / test`, `ci / conformance` e `ci / branch-name`.
@@ -58,8 +58,9 @@ jobs:
       - run: uv sync --locked
       - name: Dependências declaradas (deptry)
         run: uv run --with deptry deptry src
-      - name: ds-check (estrutura, dados, notebooks, testes, pipeline)
-        run: uvx --from "git+https://github.com/brunocvs7/ds-workflows@${{ inputs.conformance-ref }}" ds-check
+      # O ds-check vem do ds-workflows do MESMO dono (usuário ou organização) do repo que chamou o CI.
+      - name: ds-check (estrutura, dados, notebooks, pipeline)
+        run: uvx --from "git+https://github.com/${{ github.repository_owner }}/ds-workflows@${{ inputs.conformance-ref }}" ds-check
 
   branch-name:
     name: branch-name
