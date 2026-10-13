@@ -29,12 +29,15 @@ jobs:
 Proteja a `main` do repo (uma vez):
 
 ```bash
-./scripts/protect-repo.sh brunocvs7/meu-projeto
+./scripts/protect-repo.sh brunocvs7/meu-projeto      # exige 1 aprovação
+./scripts/protect-repo.sh brunocvs7/meu-projeto 0    # projeto com um dev só
 ```
 
 Ruleset aplicado: exige PR, exige os checks `ci / lint`, `ci / test`, `ci / conformance` e
 `ci / branch-name` verdes e atualizados com a `main`, bloqueia push direto, force-push e deleção.
-Merge só por squash. 0 aprovações exigidas (dá para subir quando houver mais pessoas).
+Merge só por squash. Exige 1 aprovação de outra pessoa (configurável no 2º argumento), e a aprovação precisa ser posterior ao
+último push (quem fez o último push não conta como aprovador). Reviews antigos caem a cada push
+e todas as conversas do PR precisam estar resolvidas.
 
 > Conta pessoal: rulesets só são aplicados em repos **públicos** no plano Free (privados exigem Pro).
 > Em uma organização no plano Team, este JSON pode virar um ruleset de organização com
